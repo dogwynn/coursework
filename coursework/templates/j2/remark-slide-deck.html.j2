@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    <meta charset="utf-8">
+    {% for css in sources.css: %}
+      <style>
+       {{ css | indent(7) }}
+      </style>
+    {% endfor %}
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle
+{{ markdown }}
+    </textarea>
+    {% for js in sources.js: %}
+      <script type="text/javascript">
+       {{ js }}
+      </script>
+    {% endfor %}
+    <script type="text/javascript">
+     3 var hljs = remark.highlighter.engine;
+    </script>
+    <script type="text/javascript">
+     /*
+        Language: terminal console
+        Author: Josh Bode <joshbode@gmail.com>
+      */
+
+     hljs.registerLanguage('terminal', function() {
+       return {
+         contains: [
+           {
+             className: 'string',
+             begin: '^([\\w.]+)@([\\w.]+)'
+           },
+           {
+             className: 'constant',
+             begin: ' (.*) \\$ '
+           },
+           {
+             className: 'ansi',
+             begin: '<span style\\="([^"]+)">',
+             end: '<\\/span>'
+           }
+         ]
+       }
+     });
+    </script>
+    <script type="text/javascript">
+     var slideshow = remark.create({
+       highlightStyle: 'monokai'
+     });
+     // extract the embedded styling from ansi spans
+     var highlighted = document.querySelectorAll(
+       "code.terminal span.hljs-ansi"
+     );
+     Array.prototype.forEach.call(highlighted, function(next) {
+       next.insertAdjacentHTML("beforebegin", next.textContent);
+       next.parentNode.removeChild(next);
+     });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+body { font-family: 'Droid Serif'; }
+h1, h2, h3 {
+    font-family: 'Yanone Kaffeesatz';
+    font-weight: normal;
+}
+table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+table td{
+    border: 1px solid black;
+    padding: 5px;
+}
+table th{
+    border: 1px solid black;
+    padding: 5px;
+}
+.tiny {
+    font-size: 50%;
+}
+pre {
+    background-color: #f0f0f0;
+    padding: 8px;
+}
+.remark-inline-code {
+    background-color: #f0f0f0;
+    padding: 2px;
+}
+.footnote {
+    position: absolute;
+    bottom: 3em;
+}
+.remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+.left-column {
+    width: 60%;
+    float: left;
+}
+.right-column {
+    width: 35%;
+    float: right;
+    vertical-align: top;
+}
+.footnote {
+    float: bottom;
+}
+{% if branding %}
+.remark-slide-content:before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 50px;
+    width: 176px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url('{{ image_base64(branding.logo_path) }}');
+}
+{% endif %}

@@ -1,0 +1,89 @@
+[
+    {
+        "request": {
+            "method": "GET",
+            "url": "https://belhaven.instructure.com/api/v1/courses/15882",
+            "path": "/api/v1/courses/15882",
+            "headers": {
+                "User-Agent": "python-requests/2.21.0",
+                "Accept-Encoding": "gzip, deflate",
+                "Accept": "*/*",
+                "Connection": "keep-alive",
+                "Authorization": "Bearer 3019~0uFG2rClzqPvddUSV0GVIRDRy8G8IQea9rbtyEHwbOJFAu57ziEpPbwGMQTotZkO"
+            },
+            "body": null
+        },
+        "response": {
+            "status_code": 200,
+            "headers": {
+                "Date": "Fri, 15 Nov 2019 22:03:02 GMT",
+                "Content-Type": "application/json; charset=utf-8",
+                "Transfer-Encoding": "chunked",
+                "Connection": "keep-alive",
+                "Server": "Apache",
+                "X-Session-Id": "10714044b991b383daa069119daa85c4",
+                "X-Request-Context-Id": "b510a580-f3c5-48c5-969b-00b728b3525b",
+                "Vary": "Accept-Encoding",
+                "Content-Encoding": "gzip",
+                "X-Rate-Limit-Remaining": "700.0",
+                "X-Canvas-Meta": "q=901;at=30190000000003107;dk=170000000000016;a=1;g=FvvJ6wZhVwIqed1AcYmxYwouyGSB6n035OAoBCaC;s=3019;c=cluster50;z=us-east-1b;o=courses;n=show;t=Course;i=15882;x=5.0;p=f;e=5196077;f=2019-11-15T22:03:02.41Z;b=1847888;m=1847888;u=0.06;y=0.00;d=0.03;",
+                "X-Frame-Options": "SAMEORIGIN",
+                "X-Request-Cost": "0.08805425499173225",
+                "Cache-Control": "max-age=0, private, must-revalidate",
+                "Strict-Transport-Security": "max-age=31536000",
+                "X-Permitted-Cross-Domain-Policies": "none",
+                "X-XSS-Protection": "1; mode=block",
+                "X-Canvas-User-Id": "30190000000022358",
+                "X-Download-Options": "noopen",
+                "X-Runtime": "0.117550",
+                "X-Content-Type-Options": "nosniff",
+                "Set-Cookie": "_csrf_token=4dYKIvydEdO91xVbwW5DAkq%2Bm4sn7ByC5erkL2yKNuiOoUxN195imP6PehqMKAl0c%2FXuxEmqRtGEhqlGLt5lvQ%3D%3D; path=/; secure, log_session_id=10714044b991b383daa069119daa85c4; path=/, canvas_session=fkWcrAM-Y7j4ab7a65BCPA.rvXkMdFE45JSd7Jox1VsRiTVYO7pZ_lILSGmg_jhd1kdD_0oE85KMs-7YzazXirnQZXVu7ZQI7Y52K-29UzKqgwIWbn3875ufZIur3HRVGV84ODz6syQj9lLLBlS4tlW.a_RXNGEh0E3mRnx-KIy4ZLExwLA.Xc8glg; path=/; secure; HttpOnly",
+                "X-Request-Processor": "061e51992ea156e97",
+                "X-A11y-Ally": "Dana Danger Grey",
+                "ETag": "W/\"180eaa24619ec7795ad014b1bab41469\"",
+                "Status": "200 OK",
+                "P3P": "CP=\"None, see http://www.instructure.com/privacy-policy\"",
+                "X-VTS-Response-ID": "f25ac7de-4650-4d0a-b3e8-d6ebbebf6338"
+            },
+            "body": {
+                "id": 15882,
+                "name": "CSC122 Interactive Programming Lab 01TU1",
+                "account_id": 97,
+                "uuid": "ThUofmEY7ggLQx4hlf1MibcUBunDYHle7FyAm99f",
+                "start_at": null,
+                "grading_standard_id": null,
+                "is_public": null,
+                "created_at": "2017-10-03T17:26:08Z",
+                "course_code": "CSC122 Interactive Programming Lab 01TU1",
+                "default_view": "modules",
+                "root_account_id": 1,
+                "enrollment_term_id": 60,
+                "license": null,
+                "grade_passback_setting": null,
+                "end_at": null,
+                "public_syllabus": false,
+                "public_syllabus_to_auth": false,
+                "storage_quota_mb": 2500,
+                "is_public_to_auth_users": false,
+                "hide_final_grades": false,
+                "apply_assignment_group_weights": false,
+                "calendar": {
+                    "ics": "https://belhaven.instructure.com/feeds/calendars/course_ThUofmEY7ggLQx4hlf1MibcUBunDYHle7FyAm99f.ics"
+                },
+                "time_zone": "America/Chicago",
+                "blueprint": false,
+                "enrollments": [
+                    {
+                        "type": "teacher",
+                        "role": "TeacherEnrollment",
+                        "role_id": 6,
+                        "user_id": 22358,
+                        "enrollment_state": "active"
+                    }
+                ],
+                "workflow_state": "unpublished",
+                "restrict_enrollments_to_course_dates": false
+            }
+        }
+    }
+]
