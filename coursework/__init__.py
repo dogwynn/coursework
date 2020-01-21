@@ -3,5 +3,5 @@ __email__ = 'dogwynn@lowlandresearch.com'
 __version__ = '0.0.1+build.1'
 
 from . import (
-    common, config, canvas, templates,
+    common, config, markdown, canvas, templates,
 )

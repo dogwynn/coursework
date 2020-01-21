@@ -2,7 +2,7 @@ import pprint
 import logging
 
 from toolz.curried import pipe, map, merge
-from larcutils.rest import (
+from larc.rest import (
     Api, IdResourceEndpoint, get_id_resources, ResourceEndpoint,
 )
 

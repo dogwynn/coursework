@@ -9,11 +9,14 @@ import requests
 from toolz.curried import (
     pipe, map,
 )
-from larcutils import yaml
-from larcutils.common import is_seq, is_str
+from larc import yaml
+from larc import common as lcommon
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
+
+class ConfigurationError(ValueError):
+    pass
 
 def default_config_path():
     return Path(
@@ -110,12 +113,12 @@ def validate_config(config: dict):
         if 'key' not in r and 'keys' not in r:
             reasons.append('''Doesn't have either "key" or "keys"''')
         elif 'key' in r:
-            if not is_str(r['key']):
+            if not lcommon.is_str(r['key']):
                 reasons.append(
                     '"key" is not a string.'
                 )
         elif 'keys' in r:
-            if not is_seq(r['keys']):
+            if not lcommon.is_seq(r['keys']):
                 reasons.append(
                     '"keys" is not a sequence. If specifying a single key,'
                     ' then "key" should be used.'
@@ -156,15 +159,24 @@ def get_config(path: Union[str, Path] = None):
         return True, yaml.read_yaml(path)
     return True, init_config()
 
-def get_config(path: str = None) -> dict:
-    '''Return the configuration dictionary
-    '''
-    path = Path(path).expanduser() if path else default_config_path()
-    if path.exists():
-        return yaml.read_yaml(path)
+def get_config_bang(path: Union[str, Path] = None) -> dict:
+    success, output = get_config(path)
+    if success:
+        return output
+    log.error(f'Failure to load config:\n{output}')
+    raise ConfigurationError(
+        'Configuration cannot be loaded. See above for reasons'
+    )
+
+# def get_config(path: str = None) -> dict:
+#     '''Return the configuration dictionary
+#     '''
+#     path = Path(path).expanduser() if path else default_config_path()
+#     if path.exists():
+#         return yaml.read_yaml(path)
 
 def get_root_dir(path: str = None):
-    config = get_config(path)
+    config = get_config_bang(path)
     if 'COURSEWORK_ROOT_DIR' in os.environ:
         return os.environ['COURSEWORK_ROOT_DIR']
     elif config and 'root_dir' in config:
@@ -177,7 +189,7 @@ def get_root_dir(path: str = None):
     )
     
 def get_base_url(path: str = None):
-    config = get_config(path)
+    config = get_config_bang(path)
     if 'COURSEWORK_BASE_URL' in os.environ:
         return os.environ['COURSEWORK_BASE_URL']
     elif config and 'base_url' in config:
@@ -190,7 +202,7 @@ def get_base_url(path: str = None):
     )
 
 def get_token(path: str = None):
-    config = get_config(path)
+    config = get_config_bang(path)
     if 'COURSEWORK_TOKEN' in os.environ:
         return os.environ['COURSEWORK_TOKEN']
     elif config and 'api_token' in config:
@@ -202,7 +214,7 @@ def get_token(path: str = None):
         ' config.yml file.'
     )
 
-CONFIG_TEMPLATE = r'''\
+CONFIG_TEMPLATE = r'''
 #----------------------------------------------------------------------
 # Canvas API configuration file
 #----------------------------------------------------------------------

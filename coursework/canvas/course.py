@@ -65,7 +65,7 @@ def parse_course_metadata(regexes: list, course_dict: dict):
     )
 
 default_course_meta_f = parse_course_metadata(
-    config.get_config()['regexes']
+    config.get_config_bang()['regexes']
 )
 
 course_by_id = rest.get_id_resource(

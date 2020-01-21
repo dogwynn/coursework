@@ -24,16 +24,16 @@ from .. import config
 # from ..common import (
 #     parse_course_metadata,
 # )
-from . import common
+from .. import cli
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
-exit_with_msg = common.exit_with_msg(log)
+exit_with_msg = cli.common.exit_with_msg(log)
 
 @click.command()
-@common.metadata_options
-@common.config_options
+@cli.common.metadata_options
+@cli.common.config_options
 @click.option(
     '--loglevel', default='info',
 )
@@ -45,7 +45,7 @@ def init_course(year, section, period, code, name, root_dir, config_path,
     '''
     setup_logging(loglevel)
 
-    conf = config.get_config(config_path)
+    conf = cli.common.get_config_maybe_die(config_path)
     
     root_dir = root_dir or config.get_root_dir(config_path)
     if not root_dir:

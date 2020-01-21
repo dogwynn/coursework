@@ -25,6 +25,7 @@ setup(
 
     install_requires=[
         'requests',
+        'markdown',
         'larc',
         'toolz',
         'click',

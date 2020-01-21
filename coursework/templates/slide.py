@@ -18,7 +18,7 @@ from larc.rest import (
 )
 
 from ..config import (
-    get_config,
+    get_config_bang,
 )
 from .common import (
     resolve_path, template_environment, css_path, js_path, j2_path,
@@ -71,7 +71,7 @@ def render_remark_slides(course: Endpoint, course_root: str,
             call('render', **kw),
         )
 
-    config = get_config()
+    config = get_config_bang()
     branding = config.get('branding', {})
     
     sources = {
