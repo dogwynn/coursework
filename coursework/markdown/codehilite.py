@@ -38,6 +38,22 @@ lang_regex = re.compile(
     ''', re.VERBOSE
 )
 
+options_regexes = _.pipe(
+    [
+        r'''\s+hl_lines=(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot)''',
+        r'''\s+linenums=(?P<quot>"|')(?P<linenums>.*?)(?P=quot)''',
+    ],
+    _.map(re.compile),
+    tuple,
+)
+
+get_options = _.compose(
+    _.merge,
+    _.map(lambda m: m.groupdict()),
+    _.filter(None),
+    lambda first_line: [r.search(first_line) for r in options_regexes],
+)
+
 def parse_hl_lines(expr):
     """Support our syntax for emphasizing certain lines of code.
 
@@ -176,17 +192,7 @@ class CodeHilite(object):
         first_line = lines.pop(0)
         log.info(f'first line: {first_line}')
 
-        options = _.pipe(
-            [
-                r'''\s+hl_lines=(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot)''',
-                r'''\s+linenums=(?P<quot>"|')(?P<linenums>.*?)(?P=quot)''',
-            ],
-            _.map(re.compile),
-            _.map(lambda r: r.search(first_line)),
-            _.filter(None),
-            _.map(lambda m: m.groupdict()),
-            _.merge,
-        )
+        options = get_options(first_line)
 
         # c = re.compile(r'''
         #     (?:(?:^::+)|(?P<shebang>^[#]!)) # Shebang or 2 or more colons
