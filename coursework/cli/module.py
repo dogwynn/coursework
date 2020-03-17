@@ -39,7 +39,8 @@ def sync_modules(course_dir, dry_run, loglevel):
 
     COURSE_DIR: Path of course directory. Will search given directory
     recursively for course.yml file. If provided with a directory with
-    multiple course.yml files, will error out.
+    multiple course.yml files, will sync modules across all courses
+    corresponding to found course.yml files.
 
     '''
     setup_logging(loglevel)

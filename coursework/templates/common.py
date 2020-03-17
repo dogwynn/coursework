@@ -5,6 +5,7 @@ import logging
 import mimetypes
 import base64
 import hashlib
+import json
 
 import jinja2
 from pkg_resources import resource_filename as _resource_filename
@@ -14,6 +15,7 @@ from toolz.curried import (
 )
 
 from larc import yaml
+import larc.common as __
 from larc.common import (
     maybe_first, is_int, is_seq, call, vmap, to_pyrsistent,
     deref, get,
@@ -64,10 +66,13 @@ def slide_md(course: Course, course_root: str, path: str):
 
 @curry
 def slide_link(course: Course, course_root: str,
-               path: str, link_text: str = None, *,
+               md_path: str, link_text: str = None, *,
                force_upload: bool = False,
                dry_run: bool = False):
-    pass
+    md_path = resolve_path(course_root, md_path)
+    html_path = Path(md_path.parent, md_path.stem + '.html')
+    
+    
 
 @curry
 def image_hash(course_root: str, path: str):
@@ -207,21 +212,23 @@ def questions(course: Course, course_root: str, path: str):
 
 @curry
 def code_section(course: Course, course_root: str,
-                 path: str, lines=()):
+                 path: str, **kw):
     path = resolve_path(course_root, path)
 
     log.debug(f'Inserting code from {path}')
-    if lines:
-        lines_str = pipe(
-            lines,
-            mapcat(lambda v: [v] if is_int(v) else v),
-            ' '.join,
-            lambda t: 'hl_lines="{' + t + '}"',
-        )
-        return f'```\n#!python3 {lines_str}\n{path.read_text()}\n```'
+    kw_str = json.dumps(_.merge({'linenos': 'inline'}, kw))
+    return f'```python3 {kw_str}\n{path.read_text()}\n```'
+    # if lines:
+    #     lines_str = pipe(
+    #         lines,
+    #         mapcat(lambda v: [v] if is_int(v) else v),
+    #         ' '.join,
+    #         lambda t: 'hl_lines="{' + t + '}"',
+    #     )
+    #     return f'```python3 {lines_str}\n{path.read_text()}\n```'
 
-    else:
-        return f'```python3\n{path.read_text()}\n```'
+    # else:
+    #     return f'```python3\n{path.read_text()}\n```'
 
 # course = '-'.join(
 #     map(str, (self.course.id.year,self.course.id.period,
@@ -393,7 +400,9 @@ def template_environment(course: Course, course_root: str, *,
     env.globals['questions'] = questions(
         course, course_root,
     )
-    env.globals['code_section'] = code_section
+    env.globals['code_section'] = code_section(
+        course, course_root,
+    )
 
     rng = _.pipe(
         ['year', 'period', 'code', 'section'],

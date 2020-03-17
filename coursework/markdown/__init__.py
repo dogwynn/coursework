@@ -1,1 +1,3 @@
-from . import codehilite
+from . import (
+    codehilite, codeblocks,
+)

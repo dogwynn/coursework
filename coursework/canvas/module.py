@@ -96,8 +96,8 @@ new_item = new_id_resource(
 
 @curry
 def search_items(resource_iter_f, search_key: str, output_key: str,
-                 course: Endpoint, search: str):
-    regex = re.compile(re.escape(search))
+                 course: Endpoint, search_string: str):
+    regex = re.compile(re.escape(search_string))
     found = pipe(
         resource_iter_f(course),
         filter(lambda e: regex.search(e.data[search_key])),
@@ -122,15 +122,17 @@ SEARCH = {
 
 @curry
 def item_from_dict(course: Endpoint, item: OrderedDict):
-    itype, search = pipe(
+    itype, search_string = pipe(
         item.items(),
         first,
-        vcall(lambda itype, search: (get_item_type(itype), search))
+        vcall(lambda itype, search_string: (get_item_type(itype),
+                                            search_string))
     )
 
     if itype is not None and itype in SEARCH:
-        key, title, value = SEARCH[itype](course, search)
-        # Remove the first key, value pair
+        key, title, value = SEARCH[itype](course, search_string)
+        # Remove the first key, value pair (e.g. "page": "page name
+        # search string")
         base_item = pipe(
             item.items(),
             drop(1),

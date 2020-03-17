@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Tuple, Iterable
 
 import toolz.curried as _
+import larc.common as __
 from larc import common as lcommon
 from larc import yaml
 from larc import rest
@@ -222,16 +223,39 @@ find_course_paths = _.compose(
     tuple, _.filter(lambda p: p.name == 'course.yml'), lcommon.walk,
 )
 
-def courses_from_path(api: rest.Api,
-                      path: (str, Path)) -> Tuple[rest.Endpoint]:
-    # courses = get_courses(api())
+# def courses_from_path(api: rest.Api,
+#                       path: (str, Path)) -> Tuple[rest.Endpoint]:
+#     # courses = get_courses(api())
+#     return _.pipe(
+#         find_course_paths(path),
+#         _.map(yaml.maybe_read_yaml),
+#         _.map(lambda d: d.get('id')),
+#         _.filter(None),
+#         set,
+#         _.map(course_by_id(api())),
+#         tuple,
+#     )
+
+@_.curry
+def courses_from_yaml_paths(
+        api: rest.Api,
+        course_yaml_paths: Iterable[Path]) -> Tuple[rest.Endpoint]:
     return _.pipe(
-        find_course_paths(path),
-        _.map(yaml.maybe_read_yaml),
-        _.map(lambda d: d.get('id')),
-        _.filter(None),
+        course_yaml_paths,
+        _.map(lambda p: (p, yaml.maybe_read_yaml(p))),
+        __.vmap(lambda p, d: (p, d.get('id'))),
+        __.vfilter(lambda p, id: id),
         set,
-        _.map(course_by_id(api())),
+        __.vmap(lambda p, id: (p, course_by_id(api(), id))),
+        tuple,
+    )
+
+def courses_from_path(api: rest.Api,
+                      course_dir: (str, Path)) -> Tuple[rest.Endpoint]:
+    return _.pipe(
+        find_course_paths(course_dir),
+        courses_from_yaml_paths(api),
+        _.map(_.second),
         tuple,
     )
 

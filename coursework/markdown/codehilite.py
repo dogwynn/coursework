@@ -31,15 +31,14 @@ import larc.common as __
 log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
-lang_regex = re.compile(
-    r'''(?:(?:^::+)|(?P<shebang>^[#]!)) # Shebang or 2 or more colons
-    (?P<path>(?:/\w+)*[/ ])?            # Zero or 1 path
-    (?P<lang>[\w#.+-]*)                 # The language
-    ''', re.VERBOSE
-)
-
-options_regexes = _.pipe(
+lang_regexes = _.pipe(
     [
+        re.compile(
+            r'''(?:(?:^::+)|(?P<shebang>^[#]!)) # Shebang or 2 or more colons
+            (?P<path>(?:/\w+)*[/ ])?            # Zero or 1 path
+            (?P<lang>[\w#.+-]*)                 # The language
+            ''', re.VERBOSE
+        ),
         r'''\s+hl_lines=(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot)''',
         r'''\s+linenums=(?P<quot>"|')(?P<linenums>.*?)(?P=quot)''',
     ],
@@ -47,11 +46,11 @@ options_regexes = _.pipe(
     tuple,
 )
 
-get_options = _.compose(
+get_lang = _.compose(
     _.merge,
     _.map(lambda m: m.groupdict()),
     _.filter(None),
-    lambda first_line: [r.search(first_line) for r in options_regexes],
+    lambda first_line: [r.search(first_line) for r in lang_regexes],
 )
 
 def parse_hl_lines(expr):
@@ -192,7 +191,7 @@ class CodeHilite(object):
         first_line = lines.pop(0)
         log.info(f'first line: {first_line}')
 
-        options = get_options(first_line)
+        lang = get_lang(first_line)
 
         # c = re.compile(r'''
         #     (?:(?:^::+)|(?P<shebang>^[#]!)) # Shebang or 2 or more colons
@@ -208,27 +207,26 @@ class CodeHilite(object):
         # )
 
         # search first line for shebang
-        match = __.maybe(lang_regex.search(first_line)).groupdict()
-        log.info(f'{match} {options}')
-        if match:
+        log.info(f'{lang}')
+        if lang:
             # we have a match
-            self.lang = match.get('lang', '').lower() or None
+            self.lang = lang.get('lang', '').lower() or None
             
-            if match.get('path'):
+            if lang.get('path'):
                 # path exists - restore first line
                 lines.insert(0, first_line)
 
-            linenums = options.get('linenums')
+            linenums = lang.get('linenums')
             if linenums:
                 self.linenums = linenums
             else:
-                if self.linenums is None and match.get('shebang'):
+                if self.linenums is None and lang.get('shebang'):
                     # Overridable and Shebang exists - use line numbers
                     self.linenums = self.linenumstyle
                 elif self.linenums:
                     self.linenums = self.linenumstyle
 
-            self.hl_lines = parse_hl_lines(options.get('hl_lines'))
+            self.hl_lines = parse_hl_lines(lang.get('hl_lines'))
         else:
             # No match
             lines.insert(0, first_line)
@@ -280,12 +278,15 @@ class CodeHiliteExtension(Extension):
     def __init__(self, **kwargs):
         # define default configs
         self.config = {
-            'linenums': [None,
-                         "Use lines numbers. True=yes, False=no, None=auto"],
+            'linenums': [
+                None,
+                "Use lines numbers. True=yes use linenumstyle,"
+                " False=no, None=auto"
+            ],
             'linenumstyle': [
                 'table', "What style of line number. 'table' or 'inline'"
             ],
-            'guess_lang': [True,
+            'guess_lang': [False,
                            "Automatic language detection - Default: True"],
             'css_class': ["codehilite",
                           "Set class name for wrapper <div> - "
@@ -308,7 +309,7 @@ class CodeHiliteExtension(Extension):
         """ Add HilitePostprocessor to Markdown instance. """
         hiliter = HiliteTreeprocessor(md)
         hiliter.config = self.getConfigs()
-        md.treeprocessors.register(hiliter, 'hilite', 30)
+        md.treeprocessors.register(hiliter, 'chilite', 30)
 
         md.registerExtension(self)
 

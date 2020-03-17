@@ -25,9 +25,12 @@ exit_with_msg = cli.common.exit_with_msg(log)
     'course-dir', type=click.Path(exists=True), required=True,
 )
 @click.option(
+    '-q', '--quizzes', multiple=True,
+)
+@click.option(
     '--loglevel', default='info',
 )
-def sync_quizzes(course_dir, loglevel):
+def sync_quizzes(course_dir, quizzes, loglevel):
     '''
     '''
     setup_logging(loglevel)
@@ -61,12 +64,21 @@ def sync_quizzes(course_dir, loglevel):
 
     quiz_yml_paths = _.pipe(
         quizzes_path.glob('quiz-*.yml'),
+        _.filter(lambda p: p.name in quizzes if quizzes else True),
         sorted,
     )
     if not quiz_yml_paths:
         exit_with_msg(
             f'Could not find any quizzes in {quizzes_path}'
         )
+        
+    _.pipe(
+        quiz_yml_paths,
+        _.map(str),
+        tuple,
+        yaml.dump,
+        lambda s: log.info(f'Found quizzes: \n{s}'),
+    )
 
     _.pipe(
         itertools.product(courses, [course_root], quiz_yml_paths),

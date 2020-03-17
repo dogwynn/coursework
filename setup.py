@@ -59,7 +59,9 @@ setup(
 
     entry_points={
         'console_scripts': [
+            'coursework-print-students=coursework.cli.course:print_students',
             'coursework-init-course=coursework.cli.course:init_course',
+            'coursework-sync-syllabus=coursework.cli.course:sync_syllabus',
             'coursework-sync-modules=coursework.cli.module:sync_modules',
             'coursework-render-slide=coursework.cli.slide:render_slide_html',
             'coursework-sync-slides=coursework.cli.slide:sync_slides',

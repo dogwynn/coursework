@@ -100,15 +100,14 @@ def markdown(content: str, **kwargs):
         extensions=_.pipe(
             _.concatv(
                 [
+                    'abbr', 'attr_list', 'def_list', 'footnotes',
+                ],
+                [
                     'larc.markdown.meta_yaml',
                     'larc.markdown.yaml_data',
                     'larc.markdown.card',
                     'larc.markdown.table',
-                    # 'coursework.markdown.codehilite',
-                ],
-                [
-                    'extra',
-                    'codehilite',
+                    'coursework.markdown.codeblocks',
                 ],
                 kwargs.get('extensions', []),
             ),
@@ -119,16 +118,16 @@ def markdown(content: str, **kwargs):
         extension_configs=_.merge(
             {
                 'extra': {},
-                # 'coursework.markdown.codehilite': {
-                #     'noclasses': True,
-                #     'guess_lang': False,
-                #     'linenumstyle': 'inline',
-                # },
-                'codehilite': {
+                'coursework.markdown.codeblocks': {
                     'noclasses': True,
                     'guess_lang': False,
-                    # 'linenumstyle': 'inline',
+                    'linenos': False,
                 },
+                # 'codehilite': {
+                #     'noclasses': True,
+                #     'guess_lang': False,
+                #     # 'linenumstyle': 'inline',
+                # },
             },
             kwargs.get('extension_configs', {}),
         ),
